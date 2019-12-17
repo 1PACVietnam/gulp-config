@@ -1,7 +1,7 @@
 {
-  "name": "simple-gulp-config",
-  "version": "1.0.0",
-  "description": "",
+  "name": "gulp-config",
+  "version": "1.0.1",
+  "description": "gulp config",
   "main": "index.js",
   "scripts": {
     "start": "gulp watch",
@@ -10,7 +10,7 @@
     "copy-to-deploy": "mkdir -p ~/Documents/_test_tmp && /bin/cp -Rf ./public/* ~/Documents/_test_tmp/ && git checkout deploy && /bin/cp -Rf ~/Documents/_test_tmp/* ./public/"
   },
   "keywords": [],
-  "author": "",
+  "author": "1PAC Vietnam",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.1.6",
@@ -18,7 +18,7 @@
     "babelify": "^10.0.0",
     "browser-sync": "^2.26.3",
     "browserify": "^16.2.3",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-autoprefixer": "^6.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-nunjucks": "^3.0.0",
@@ -31,5 +31,8 @@
     "run-sequence": "^2.2.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=8.x.x <12.x.x"
   }
 }

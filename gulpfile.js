@@ -1,35 +1,35 @@
-var gulp = require('gulp');
-var nunjucks = require('gulp-nunjucks');
-var sass = require('gulp-sass');
-var sourcemap = require('gulp-sourcemaps');
-var autoprefixer = require('gulp-autoprefixer');
-var scssLint = require('gulp-scss-lint');
-var browserify = require('browserify');
-var sourceStream = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var uglify = require('gulp-uglify');
-var babelify = require('babelify');
-var browserSync = require('browser-sync').create();
-var gtil = require('gulp-util');
-var clean = require('gulp-clean');
-var runSequence = require('run-sequence');
-var plumber = require('gulp-plumber');
+const gulp = require('gulp')
+const nunjucks = require('gulp-nunjucks')
+const sass = require('gulp-sass')
+const sourcemap = require('gulp-sourcemaps')
+const autoprefixer = require('gulp-autoprefixer')
+const scssLint = require('gulp-scss-lint')
+const browserify = require('browserify')
+const sourceStream = require('vinyl-source-stream')
+const buffer = require('vinyl-buffer')
+const uglify = require('gulp-uglify')
+const babelify = require('babelify')
+const browserSync = require('browser-sync').create()
+const gtil = require('gulp-util')
+const clean = require('gulp-clean')
+const runSequence = require('run-sequence')
+const plumber = require('gulp-plumber')
 
-var init = {
+const init = {
   srcPath: './src',
   destPath: './public'
-};
+}
 
 gulp.task('html', () => {
-  gulp.src([`${init.srcPath}/html/**/*.html`, `!${init.srcPath}/html/shared/*`, `!${init.srcPath}/html/layout/*`])
+  return gulp.src([`${init.srcPath}/html/**/*.html`, `!${init.srcPath}/html/shared/*`, `!${init.srcPath}/html/layout/*`])
       .pipe(nunjucks.compile().on('error', (err) => {
         gtil.log(`[${err.plugin}] There is an error from ${err.fileName}`)
       }))
       .pipe(gulp.dest(`${init.destPath}/`))
-});
+})
 
 gulp.task('css', () => {
-  gulp.src(`${init.srcPath}/scss/**/*.scss`)
+  return gulp.src(`${init.srcPath}/scss/**/*.scss`)
       .pipe(plumber({
         handleError: err => {
         console.log(err);
@@ -39,14 +39,14 @@ gulp.task('css', () => {
       .pipe(scssLint({ 'config': '.scss-lint.yml' }))
       .pipe(sourcemap.init())
       .pipe(sass({ outputStyle: 'compressed' }))
-      //.pipe(autoprefixer({ browsers: ['last 2 versions'], cascade: false }))
+      .pipe(autoprefixer({ cascade: false }))
       .pipe(sourcemap.write())
       .pipe(gulp.dest(`${init.destPath}/css`))
       .pipe(browserSync.stream())
-});
+})
 
 gulp.task('js', () => {
-  browserify({
+  return browserify({
     entries: `${init.srcPath}/js/main.js`,
     debug: false
   })
@@ -60,29 +60,29 @@ gulp.task('js', () => {
   .pipe(uglify())
   .pipe(sourcemap.write())
   .pipe(gulp.dest(`${init.destPath}/js`))
-});
+})
 
 gulp.task('browserSync', () => {
-  browserSync.init({
+  return browserSync.init({
     server: {
       baseDir: `${init.destPath}`
     },
     port: 8001
   })
-});
+})
 
-gulp.task('watch', ['browserSync', 'css'], () => {
-  gulp.watch(`${init.srcPath}/scss/**/*.scss`, ['css']);
-  gulp.watch(`${init.srcPath}/js/**/*.js`, ['js']).on('change', () => browserSync.reload());
-  gulp.watch(`${init.srcPath}/html/**/*.html`, ['html']).on('change', () => browserSync.reload());
-});
+gulp.task('watch', gulp.series('browserSync', 'css'), () => {
+  gulp.watch(`${init.srcPath}/scss/**/*.scss`, gulp.series('css'));
+  gulp.watch(`${init.srcPath}/js/**/*.js`, gulp.series('js')).on('change', () => browserSync.reload());
+  gulp.watch(`${init.srcPath}/html/**/*.html`, gulp.series('html')).on('change', () => browserSync.reload());
+})
 
 gulp.task('clean', () => {
   gulp.src(`${init.destPath}/*`)
       .pipe(clean())
-});
+})
 
-gulp.task('default', ['html', 'css', 'js']);
+gulp.task('default', gulp.series('html', 'css', 'js'));
 gulp.task('deploy', (callback) => {
   runSequence('clean', 'html', 'image', 'css', 'js', callback);
-});
+})

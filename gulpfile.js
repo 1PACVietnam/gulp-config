@@ -10,7 +10,6 @@ const buffer = require('vinyl-buffer')
 const uglify = require('gulp-uglify')
 const babelify = require('babelify')
 const browserSync = require('browser-sync').create()
-const gtil = require('gulp-util')
 const clean = require('gulp-clean')
 const runSequence = require('run-sequence')
 const plumber = require('gulp-plumber')
@@ -22,9 +21,7 @@ const init = {
 
 gulp.task('html', () => {
   return gulp.src([`${init.srcPath}/html/**/*.html`, `!${init.srcPath}/html/shared/*`, `!${init.srcPath}/html/layout/*`])
-      .pipe(nunjucks.compile().on('error', (err) => {
-        gtil.log(`[${err.plugin}] There is an error from ${err.fileName}`)
-      }))
+      .pipe(nunjucks.compile())
       .pipe(gulp.dest(`${init.destPath}/`))
 })
 
